@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Braille Bot</title>
+</head>
+<body class="center-text" style="background-color: rgb(3, 3, 44);">
+    <h1 style="font-size: 90px; color: white; background-color: blue;" id="heading1;">Braille Bot</h1>
+    
+    <button id="record">Press Space and Speak</button>
+    <div id="response"></div>   
+    <div id="youtubeVideo">
+       <!--<iframe width="560" height="315" src="" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+        <audio id="audio" autoplay>
+
+            <source src="/templates/narration.mp3">
+
+        </audio> -->
+    </div>
+    <style>
+       
+    #response {
+    color: #ffffff;
+    font-size: 18px;
+    background-color: #0F82FF;
+   font-size: medium;
+    /* Add other styles as needed */
+}
+    </style>
+    <script>
+
+
+//utter = new window.SpeechSynthesisUtterance(" ");
+
+//window.speechSynthesis.cancel();
+//window.speechSynthesis.speak(utter);
+
+document.addEventListener('keydown', (event)=> {    
+    //console.log(event); // all event related info
+    //console.log(event.type);
+    //console.log(event.key);
+    //console.log(event.code);
+    if (event.code == "Space"){
+        //console.log("Space pressed");
+        recordButton.click();
+    }
+});
+
+         //window.postMessage()
+        const recordButton = document.getElementById('record');
+        const responseDiv = document.getElementById('response');
+        const youtubeVideoDiv = document.getElementById('youtubeVideo');
+        const videoPlayer = document.getElementById('videoPlayer');
+
+        /*function performSpeechSynthesis() {
+            alert("Page loaded");
+            const synthesiss = new SpeechSynthesisUtterance("Hello, my name is your virtual assistant.");
+            synthesiss.pitch = 1;
+            synthesiss.rate = 0.8;
+            synthesiss.lang = 'en-US';
+
+            // Event listener to handle when speech synthesis is finished
+            synthesiss.onend = function(event) {
+                alert("Speech synthesis complete");
+            };
+
+            // Start speech synthesis
+            speechSynthesis.speak(synthesiss);
+        }
+        // Simulating an asynchronous call with a promise
+        new Promise((resolve) => {
+            // Simulated delay (you can replace this with an actual async operation)
+            setTimeout(resolve, 10);
+        }).then(() => {
+            performSpeechSynthesis(); // Call the function when the promise is resolved
+        });
+
+        var element = document.getElementById('heading1');
+    element.addEventListener('click', function() {
+        
+        const synthesiss = new SpeechSynthesisUtterance("Hello, my name is your virtual assistant.");
+            synthesiss.pitch = 1;
+            synthesiss.rate = 0.8;
+            synthesiss.lang = 'en-US';
+            
+            // Event listener to handle when speech synthesis is finished
+            synthesiss.onend = function(event) {
+                console.log("Speech synthesis complete");
+            };
+            
+            // Start speech synthesis
+            speechSynthesis.cancel();
+            speechSynthesis.speak(synthesiss);
+
+    });*/
+
+
+    
+
+window.onload = function() {
+
+    var audioelement = document.getElementById('audio');
+    audioelement.play();
+
+    
+    element.click();
+        };
+
+
+
+        let recognition;
+       
+
+        recordButton.addEventListener('click', () => {
+            if (recognition && recognition.isStarted) {
+                recognition.stop();
+                recognition = undefined;
+                recordButton.innerText = 'Press Space and Speak';
+            } else {
+                // Use the Web Speech API to perform speech recognition in the browser
+                recognition = new webkitSpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onstart = () => {
+                    recordButton.innerText = 'Listening...';
+                };
+               
+                recognition.onresult = (event) => {
+                    const result = event.results[0][0].transcript;
+                    responseDiv.innerText = result;
+                    
+                    sendToServer(result);
+                    recognition.stop();
+                    recordButton.innerText = 'Press Space and Speak';
+                };
+
+                recognition.start();
+                recordButton.innerText = 'Listening...';
+            }
+        });
+
+        function sendToServer(command) {
+            //Fetch to send the command to the Flask backend
+            fetch('/process-command', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ command }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                responseDiv.innerText = data.response;
+                //Web Speech API to perform text-to-speech in the browser
+            
+
+                if (data.response.includes('youtube')){
+                    // If a YouTube URL is provided, display and play the video
+                    youtubeVideoDiv.style.display = 'block';
+                    const iframe = youtubeVideoDiv.querySelector('iframe');
+                    iframe.src = data.response;
+                    data.response = "";
+                } else {
+                    youtubeVideoDiv.style.display = 'none';
+                }
+                              
+                const synthesis = new SpeechSynthesisUtterance(data.response);
+                synthesis.pitch = 1;
+                synthesis.rate = 0.8;
+                synthesis.lang = 'en-US';
+              
+               
+                speechSynthesis.speak(synthesis);
+            });
+        }
+    </script>
+</body>
+</html>
