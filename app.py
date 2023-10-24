@@ -86,12 +86,16 @@ def command_search_wikipedia(command):
         return f"No results found for {person}. Please try another query."
 
 def command_tell_joke():
-    #jokes_api = "https://icanhazdadjoke.com/slack"
-    #joke = requests.get(jokes_api).json()['attachments'][0]['text']
-    My_joke = pyjokes.get_joke(language="en", category="all") 
-    return My_joke
-    if not joke:
-        return "Sorry, I am unable to tell a joke at the moment."
+    jokes_api = "https://icanhazdadjoke.com/slack"
+    response = requests.get(jokes_api)
+    
+    if response.status_code == 200:
+        joke = response.json()['attachments'][0]['text']
+        if joke:
+            return joke
+        
+    else:
+        raise Exception(f"Failed to retrieve a joke due to the Status code: {response.status_code}")
   
 def command_tell_news():
     url = ('https://newsapi.org/v2/top-headlines?'
