@@ -43,6 +43,8 @@ def process_command():
 
     elif 'tell me news' in command:
         response = command_tell_news()
+    else:
+        response = "Sorry, I couldn't understand you, please speak again with any of the following keywords: hello, music, time, who is, joke, news "
     return jsonify({'response': response})
 
 def greeting_message():
