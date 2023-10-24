@@ -22,6 +22,8 @@ def process_command():
     print("hello")
     data = request.get_json()
     command = data.get('command', 'No command provided')
+    if data is None:
+        return jsonify({'error': 'Invalid JSON data.'}), 400
     response = ""
     print(command)
     # Process the command based on keywords
