@@ -79,16 +79,16 @@ def command_get_current_time():
 def command_search_wikipedia(command):
     person = command.replace('who is', '')
     try:
+        response = requests.get(f"https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&utf8=1&srsearch={person}")
+        response.raise_for_status()
         info = wikipedia.summary(person, sentences=4)
         return info
-        print("Hem")
-
+ 
     except wikipedia.exceptions.DisambiguationError as e:
         return f"Multiple results found for {person}. Please provide more specific input."
-
+ 
     except wikipedia.exceptions.PageError as e:
         return f"No results found for {person}. Please try another query."
-
 def command_tell_joke():
     jokes_api = "https://icanhazdadjoke.com/slack"
     response = requests.get(jokes_api)
