@@ -71,7 +71,7 @@ def command_play_music(command):
     return url
 
 def command_get_current_time():
-    time = datetime.datetime.now().strftime('%H:%M')
+    time = datetime.datetime.now().strftime('%I:%M %p')
     return f"The current time is {time}"
     if not time:
         return "Sorry, I am unable to tell the time."
