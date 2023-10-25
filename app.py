@@ -114,7 +114,7 @@ def command_tell_joke():
     else:
         raise Exception(f"Failed to retrieve a joke due to the Status code: {response.status_code}")
   
-command_tell_news():
+def command_tell_news():
     try:
         url = ('https://newsapi.org/v2/top-headlines?'
             'country=us&'
@@ -123,14 +123,18 @@ command_tell_news():
 
         if response.status_code == 200:
             data = response.json()
-            # Simulate a response with an unexpected structure
-            headlines = data['invalid_key']['title']
-            return "Here are the latest news headlines: " + headlines
+            # Introduce a bug by attempting to access an 'articles' field that doesn't exist
+            articles = data.get('nonexistent_key', [])
+            headlines = []
+            for article in articles:
+                headlines.append(article['title'])
+            return "Here are the latest news headlines: " + ", ".join(headlines)
         else:
             return "Sorry, I am unable to tell the news at the moment."
 
     except requests.exceptions.RequestException as e:
         return f"An error occurred while fetching news: {e}"
+
 if __name__ == '_main_':
     app.run(debug=True)  
 
