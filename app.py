@@ -84,7 +84,8 @@ def command_get_current_time():
         return "Sorry, I am unable to tell the time."
 
 def command_search_wikipedia(command):
-    person = command.replace('who is', '')
+    person = command.replace('who is', '').strip()
+
     try:
         response = requests.get(f"https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&utf8=1&srsearch={person}")
         response.raise_for_status()
