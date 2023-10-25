@@ -128,20 +128,25 @@ def command_tell_joke():
  def command_tell_news():
     try:
         url = ('https://newsapi.org/v2/top-headlines?'
-            'country=us&'
-            'apiKey=13233a39c12b47e085c6aa914b4ee10f')
+               'country=us&'
+               'apiKey=13233a39c12b47e085c6aa914b4ee10f')
         response = requests.get(url)
 
         if response.status_code == 200:
             data = response.json()
-            # Simulate a response with an unexpected structure
-            headlines = data['invalid_key']['title']
-            return "Here are the latest news headlines: " + headlines
+
+            # Introduce a bug by attempting to access a non-existent key in 'data'
+            articles = data['non_existent_key']
+            headlines = []
+            for article in articles:
+                headlines.append(article['title'])
+            return "Here are the latest news headlines: " + ", ".join(headlines)
         else:
             return "Sorry, I am unable to tell the news at the moment."
 
     except requests.exceptions.RequestException as e:
         return f"An error occurred while fetching news: {e}"
+
 if __name__ == '_main_':
     app.run(debug=True)  
 
