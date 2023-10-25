@@ -63,13 +63,19 @@ def greeting_message():
 def command_play_music(command):
     command = command.replace('play music', '')
     print(command)
-    url = pywhatkit.playonyt(command, open_video=True)
-    url = url.split('?v=')[1].split('/')[0]
+   try:
 
-    #url = f"https://www.youtube.com/embed/{url}?autoplay=1&mute=1"
-    if not url:
-        return "Sorry, I am unable to play the requested music."
-    return url
+        url = pywhatkit.playonyt(command, open_video=True)
+        url = url.split('?v=')[1].split('/')[0]
+        url = f"https://www.youtube.com/embed/{url}?autoplay=1&mute=1"
+        # Check if the URL is valid by making a request
+        response = requests.url
+        if response.status_code == 200:
+            return url
+        else:
+            return " "
+    except Exception as e:
+        return "An error occurred while trying to play the music.Please provide another music"
 
 def command_get_current_time():
     time = datetime.datetime.now().strftime('%I:%M %p')
