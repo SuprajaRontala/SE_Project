@@ -114,20 +114,24 @@ def command_tell_joke():
         raise Exception(f"Failed to retrieve a joke due to the Status code: {response.status_code}")
   
 def command_tell_news():
-    url = ('https://newsapi.org/v2/top-headlines?'
-        'country=us&'
-        'apiKey=13233a39c12b47e085c6aa914b4ee10f')
-    response = requests.get(url)
+    try:
+        url = ('https://newsapi.org/v2/top-headlines?'
+            'country=us&'
+            'apiKey=13233a39c12b47e085c6aa914b4ee10f')
+        response = requests.get(url)
 
-    if response.status_code == 200:
-        data = response.json()
-        articles = data['articles']
-        headlines = []
-        for article in articles:
-            headlines.append(article['title'])
-        return "Here are the latest news headlines: " + ", ".join(headlines)
-    else:
-        return "Sorry, I am unable to tell the news at the moment."
+        if response.status_code == 200:
+            data = response.json()
+            articles = data['articles']
+            headlines = []
+            for article in articles:
+                headlines.append(article['title'])
+            return "Here are the latest news headlines: " + ", ".join(headlines)
+        else:
+            return "Sorry, I am unable to tell the news at the moment."
+
+    except requests.exceptions.RequestException as e:
+        return f"An error occurred while fetching news: {e}"
 if __name__ == '_main_':
     app.run(debug=True)  
 
