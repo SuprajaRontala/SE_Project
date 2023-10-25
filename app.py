@@ -69,7 +69,7 @@ def command_play_music(command):
         url = url.split('?v=')[1].split('/')[0]
         url = f"https://www.youtube.com/embed/{url}?autoplay=1&mute=1"
         # Check if the URL is valid by making a request
-        response = requests.url
+        response = requests.get(url)
         if response.status_code == 200:
             return url
         else:
