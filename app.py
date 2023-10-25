@@ -78,14 +78,13 @@ def command_play_music(command):
         return "An error occurred while trying to play the music.Please provide another music"
 
 def command_get_current_time():
-    try:
-        utc_time = datetime.datetime.now(pytz.utc)
-        time_with_timezone = utc_time.strftime('%H:%M:%S %Z')
-        timestamp = datetime.datetime.now().strftime('%I:%M %p %Y-%m-%d')
-        return f"The current time with date: {timestamp}. with time zone offset is {time_with_timezone}."
+    time = datetime.datetime.now().strftime('%I:%M %p')
 
-    except Exception as e:
-        return f"An error occurred: {str(e)}"
+    if not time:
+
+        return "Sorry, I am unable to tell the time."
+
+    return f"The current time is {time}"
 
 def command_search_wikipedia(command):
     person = command.replace('who is', '').strip()
