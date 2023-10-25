@@ -125,7 +125,7 @@ def command_tell_joke():
     else:
         raise Exception(f"Failed to retrieve a joke due to the Status code: {response.status_code}")
   
-def command_tell_news():
+ def command_tell_news():
     try:
         url = ('https://newsapi.org/v2/top-headlines?'
             'country=us&'
@@ -134,11 +134,9 @@ def command_tell_news():
 
         if response.status_code == 200:
             data = response.json()
-            articles = data['articles']
-            headlines = []
-            for article in articles:
-                headlines.append(article['title'])
-            return "Here are the latest news headlines: " + ", ".join(headlines)
+            # Simulate a response with an unexpected structure
+            headlines = data['invalid_key']['title']
+            return "Here are the latest news headlines: " + headlines
         else:
             return "Sorry, I am unable to tell the news at the moment."
 
