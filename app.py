@@ -78,13 +78,12 @@ def command_play_music(command):
         return "An error occurred while trying to play the music.Please provide another music"
 
 def command_get_current_time():
-    time = datetime.datetime.now().strftime('%I:%M %p')
+    timestamp = datetime.datetime.now().strftime('%I:%M %p %Y-%m-%d')
+    if timestamp:
+        return f"The current time with date: {timestamp}"
 
-    if not time:
-
-        return "Sorry, I am unable to tell the time."
-
-    return f"The current time is {time}"
+    else:
+        return "Sorry, I am unable to provide the time .";
 
 def command_search_wikipedia(command):
     person = command.replace('who is', '').strip()
