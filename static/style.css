@@ -1,1 +1,73 @@
+.responsed {
+    color: hwb(0 0% 100%);
+    font-size: 18px;
+    background-color: #6aada2;
+    font-size: medium;
+    position:absolute;
+    /* Add other styles as needed */
+}
+.chatshistory
+{
+    color: hwb(0 0% 100%);
+    font-size: 18px;
+    background-color: #20dfbf;
+    font-size: medium;
+    position:absolute;
+    /* Add other styles as needed */
+}
+.center-text1
+{
+    background-color: rgb(176, 206, 201);
+    opacity: 0.3;
+}
+.h1
+{
+    font-size: 90px; 
+    color: white; 
+    background-color: rgb(25, 68, 62);
+}
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    position:absolute;
+}
+
+.command-container {
+    background-color: #E0E0E0;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 10px;
+    align-self: flex-start;
+    position:absolute;
+}
+
+.response-container {
+    background-color: #C8F7C5;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 10px;
+    align-self: flex-end;
+    position:absolute;
+}
+.user-message {
+    text-align: left;
+    margin-left: 10px;
+    margin-right: 60%;
+    background-color: #9ef0d9;
+    padding: 5px;
+    border-radius: 5px;
+    clear: both;
+    color: #0b0b0b;
+}
+
+.bot-message {
+    text-align: right;
+    margin-left: 60%;
+    margin-right: 10px;
+    background-color: #0bcd96;
+    color: #0b0b0b;
+    padding: 5px;
+    border-radius: 5px;
+    clear: both;
+}
 
