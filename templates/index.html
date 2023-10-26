@@ -29,90 +29,50 @@
     </style>
     <script>
 
-
-//utter = new window.SpeechSynthesisUtterance(" ");
-
-//window.speechSynthesis.cancel();
-//window.speechSynthesis.speak(utter);
+ 
 
 document.addEventListener('keydown', (event)=> {    
-    //console.log(event); // all event related info
-    //console.log(event.type);
-    //console.log(event.key);
-    //console.log(event.code);
+   
     if (event.code == "Space"){
-        //console.log("Space pressed");
+       
         recordButton.click();
     }
 });
 
-         //window.postMessage()
         const recordButton = document.getElementById('record');
         const responseDiv = document.getElementById('response');
         const youtubeVideoDiv = document.getElementById('youtubeVideo');
         const videoPlayer = document.getElementById('videoPlayer');
-
-        /*function performSpeechSynthesis() {
-            alert("Page loaded");
-            const synthesiss = new SpeechSynthesisUtterance("Hello, my name is your virtual assistant.");
-            synthesiss.pitch = 1;
-            synthesiss.rate = 0.8;
-            synthesiss.lang = 'en-US';
-
-            // Event listener to handle when speech synthesis is finished
-            synthesiss.onend = function(event) {
-                alert("Speech synthesis complete");
-            };
-
-            // Start speech synthesis
-            speechSynthesis.speak(synthesiss);
-        }
-        // Simulating an asynchronous call with a promise
-        new Promise((resolve) => {
-            // Simulated delay (you can replace this with an actual async operation)
-            setTimeout(resolve, 10);
-        }).then(() => {
-            performSpeechSynthesis(); // Call the function when the promise is resolved
-        });
-
-        var element = document.getElementById('heading1');
-    element.addEventListener('click', function() {
-        
-        const synthesiss = new SpeechSynthesisUtterance("Hello, my name is your virtual assistant.");
-            synthesiss.pitch = 1;
-            synthesiss.rate = 0.8;
-            synthesiss.lang = 'en-US';
-            
-            // Event listener to handle when speech synthesis is finished
-            synthesiss.onend = function(event) {
-                console.log("Speech synthesis complete");
-            };
-            
-            // Start speech synthesis
-            speechSynthesis.cancel();
-            speechSynthesis.speak(synthesiss);
-
-    });*/
-
-
+        const chatContainer = document.getElementById('chatContainer');
+var msg = new SpeechSynthesisUtterance();
+var voices = window.speechSynthesis.getVoices();
+msg.voice = voices[1]; 
+msg.volume = 1; // From 0 to 1
+msg.rate = 1; // From 0.1 to 10
+msg.pitch = 2; // From 0 to 2
+msg.text = "Hello, I am your virtual assistant! How can I help you?";
+msg.lang = 'en';
+speechSynthesis.speak(msg);
+      
     
 
-window.onload = function() {
+window.onload = function() 
+{
 
-    var audioelement = document.getElementById('audio');
-    audioelement.play();
+ 
 
-    
+  
     element.click();
         };
 
 
 
         let recognition;
-       
-
         recordButton.addEventListener('click', () => {
             if (recognition && recognition.isStarted) {
+                updateChatHistory();
+
+
                 recognition.stop();
                 recognition = undefined;
                 recordButton.innerText = 'Press Space and Speak';
@@ -130,7 +90,7 @@ window.onload = function() {
                 recognition.onresult = (event) => {
                     const result = event.results[0][0].transcript;
                     responseDiv.innerText = result;
-                    
+
                     sendToServer(result);
                     recognition.stop();
                     recordButton.innerText = 'Press Space and Speak';
@@ -140,6 +100,10 @@ window.onload = function() {
                 recordButton.innerText = 'Listening...';
             }
         });
+        let commands = [];
+        let responses = [];
+
+
 
         function sendToServer(command) {
             //Fetch to send the command to the Flask backend
@@ -154,7 +118,16 @@ window.onload = function() {
             .then(data => {
                 responseDiv.innerText = data.response;
                 //Web Speech API to perform text-to-speech in the browser
-            
+                // Create a new chat history entry with the command
+        const commandEntry = command;
+        commands.push(commandEntry);
+
+        // Create a new chat history entry with the response
+        const responseEntry = data.response;
+        responses.push(responseEntry);
+
+        // Update the chat history displays for commands and responses
+        updateChatHistory();
 
                 if (data.response.includes('youtube')){
                     // If a YouTube URL is provided, display and play the video
@@ -165,7 +138,7 @@ window.onload = function() {
                 } else {
                     youtubeVideoDiv.style.display = 'none';
                 }
-                              
+            
                 const synthesis = new SpeechSynthesisUtterance(data.response);
                 synthesis.pitch = 1;
                 synthesis.rate = 0.8;
@@ -174,6 +147,25 @@ window.onload = function() {
                
                 speechSynthesis.speak(synthesis);
             });
+            
+            function updateChatHistory() {
+    const chatContainer = document.getElementById('chatContainer');
+
+    for (let i = 0; i < Math.min(commands.length, responses.length); i++) {
+        const userCommand = document.createElement('div');
+        userCommand.classList.add('user-message');
+        userCommand.textContent = `User: ${commands[i]}`;
+        chatContainer.appendChild(userCommand);
+
+        const botResponse = document.createElement('div');
+        botResponse.classList.add('bot-message');
+        botResponse.textContent = `Bot: ${responses[i]}`;
+        chatContainer.appendChild(botResponse);
+    }
+}
+
+
+
         }
     </script>
 </body>
