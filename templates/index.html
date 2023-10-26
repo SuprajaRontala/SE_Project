@@ -1,32 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
     <meta charset="UTF-8">
     <title>Braille Bot</title>
 </head>
-<body class="center-text" style="background-color: rgb(3, 3, 44);">
-    <h1 style="font-size: 90px; color: white; background-color: blue;" id="heading1;">Braille Bot</h1>
-    
+<body  class="center-text1">
+    <h1 class="h1" id="heading1">Braille Bot</h1>
     <button id="record">Press Space and Speak</button>
-    <div id="response"></div>   
-    <div id="youtubeVideo">
-       <!--<iframe width="560" height="315" src="" frameborder="0" allowfullscreen allow="autoplay"></iframe>
-        <audio id="audio" autoplay>
+    <!--div class="responsed" id="response"></div--> 
 
-            <source src="/templates/narration.mp3">
-
-        </audio> -->
+    <div id="chatContainer" class="conversation-container">
+        <div class="command-container"></div>
+        <div class="response-container"id="response" ></div>
     </div>
-    <style>
-       
-    #response {
-    color: #ffffff;
-    font-size: 18px;
-    background-color: #0F82FF;
-   font-size: medium;
-    /* Add other styles as needed */
-}
-    </style>
     <script>
 
 
