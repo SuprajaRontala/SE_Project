@@ -7,10 +7,21 @@ import pyjokes
 import pytz
 import geopy.distance
 from geopy.geocoders import Nominatim
+import re
+from validate_email_address import validate_email
+from email.message import EmailMessage
+import ssl
+import smtplib
 from PyMultiDictionary import MultiDictionary
 dictionary = MultiDictionary()
 
 GEOAPIFY_API_KEY = 'bad2ec3ffa3743b28a768ef23faad806'
+
+email_sender = 'braillebotuser@gmail.com'
+email_password = 'kalz qubc pnvs ecwe'
+email_receiver = 'sample4123@gmail.com'
+
+subject = 'Test mail'
 app = Flask(__name__)
 
 def render_ind():
@@ -70,6 +81,9 @@ def process_command():
 
     if 'define' in command:
         return jsonify({'response': get_meaning(command)})
+    if 'email' in command.split():
+        print(command)
+        return jsonify({'response': command_send_email(command)})
  
     return jsonify({'response': "Please provide a valid input"})
 
@@ -322,6 +336,39 @@ def get_meaning(command):
         
     else:
         return 'Invalid command. Please use the format: Define [word]'
+def is_valid_email(email):
+    return validate_email(email)
+
+def command_send_email(command):
+    try:
+        print(command)
+        # Collect email information from the user
+        to_address = command.split('to')[1].split('subject')[0].strip().lower()
+        to_address = to_address.replace(' ', '').replace('attherateof', '@').replace('at', '@').replace('attherate', '@')
+        if not is_valid_email(to_address):
+            return "No user found. Please provide a valid Gmail address."
+        from_address = email_sender
+        subject = command.split('subject')[1].split('body')[0].strip()
+        body = command.split('body')[1].strip()
+        print(to_address, from_address, subject, body)
+        
+       
+        message = EmailMessage()
+        message['From'] = from_address
+        message['To'] = to_address
+        message['Subject'] = subject
+
+        # Attach the body to the email
+        message.set_content(body)
+
+        context = ssl.create_default_context()
+
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as server:
+            server.login(email_sender, email_password)
+            server.send_message(message)
+            return "Email sent successfully!"
+    except Exception as e:
+        return f"An error occurred while sending the email: Please send email in the format send email to reciepient address subject content body content"
 
 if __name__ == '_main_':
     app.run(debug=True)
