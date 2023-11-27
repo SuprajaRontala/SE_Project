@@ -1,70 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <link rel="stylesheet" type="text/css" href="../static/style.css">
+    <link rel="stylesheet" type="text/css" href="../static/style.css" />
     <meta charset="UTF-8">
     <title>Braille Bot</title>
 </head>
-<body  class="center-text1">
-    <h1 class="h1" id="heading1">Braille Bot</h1>
-    <button id="record">Press Space and Speak</button>
-    <!--div class="responsed" id="response"></div--> 
 
-    <div id="chatContainer" class="conversation-container">
-        <div class="command-container"></div>
-        <div class="response-container"id="response" ></div>
+<body class="center-text1">
+
+    <h1 id="heading1">Braille Bot</h1>
+    <button id="record">Press Space and Speak </button>
+    <div id="imageContainer"></div>
+
+    <div id="chatContainer" class="center-text">
+        <div id="chatHistory"></div>
     </div>
-    <script>
+    
+    <div id="youtubeVideo"></div>
 
- 
-
-document.addEventListener('keydown', (event)=> {    
-   
-    if (event.code == "Space"){
-       
-        recordButton.click();
-    }
-});
-
-        const recordButton = document.getElementById('record');
-        const responseDiv = document.getElementById('response');
-        const youtubeVideoDiv = document.getElementById('youtubeVideo');
-        const videoPlayer = document.getElementById('videoPlayer');
-        const chatContainer = document.getElementById('chatContainer');
-var msg = new SpeechSynthesisUtterance();
-var voices = window.speechSynthesis.getVoices();
-msg.voice = voices[1]; 
-msg.volume = 1; // From 0 to 1
-msg.rate = 1; // From 0.1 to 10
-msg.pitch = 2; // From 0 to 2
-msg.text = "Hello, I am your virtual assistant! How can I help you?";
-msg.lang = 'en';
-speechSynthesis.speak(msg);
-      
     
 
-window.onload = function() 
-{
+    <script>
+        var lat, lon;
+        var chatHistory = '';
 
- 
+        document.addEventListener('keydown', (event) => {
+            if (event.code == "Space") {
+                recordButton.click();
+            }
+        });
 
-  
-    element.click();
+        const recordButton = document.getElementById('record');
+        const chatHistoryDiv = document.getElementById('chatHistory');
+        const youtubeVideoDiv = document.getElementById('youtubeVideo');
+        
+        window.onload = function () {
+            var audioelement = document.getElementById('audio');
+
+            if (audioelement) {
+                audioelement.addEventListener('loadeddata', function () {
+                    recordButton.click();
+                });
+
+                audioelement.play();
+            }
         };
 
-
-
         let recognition;
+
         recordButton.addEventListener('click', () => {
             if (recognition && recognition.isStarted) {
-                updateChatHistory();
-
-
                 recognition.stop();
                 recognition = undefined;
                 recordButton.innerText = 'Press Space and Speak';
+                
             } else {
-                // Use the Web Speech API to perform speech recognition in the browser
                 recognition = new webkitSpeechRecognition();
                 recognition.continuous = false;
                 recognition.interimResults = false;
@@ -72,88 +63,109 @@ window.onload = function()
 
                 recognition.onstart = () => {
                     recordButton.innerText = 'Listening...';
+                    
                 };
-               
+
                 recognition.onresult = (event) => {
                     const result = event.results[0][0].transcript;
-                    responseDiv.innerText = result;
+                    const proresult = result.replace(/attherateof/g, '@');
 
-                    sendToServer(result);
+                    // Display the request
+                    sendToServer(proresult);
                     recognition.stop();
                     recordButton.innerText = 'Press Space and Speak';
+                    
                 };
 
                 recognition.start();
                 recordButton.innerText = 'Listening...';
+                
             }
         });
-        let commands = [];
-        let responses = [];
 
+        function sleep(ms) {
+            return new Promise((resolve) => setTimeout(resolve, ms));
+        }
 
+        async function getLocationWithDelay() {
+            return new Promise((resolve, reject) => {
+                try {
+                    fetch("https://ipinfo.io/loc?token=3ce7633385e4a0", {
+                        method: "GET",
+                        headers: {
+                            "User-agent": "Mozilla/4.0 Custom User Agent",
+                        },
+                    })
+                        .then((response) => response.text())
+                        .then((locationString) => {
+                            console.log(locationString);
+                            const [latitude, longitude] = locationString.split(",");
+                            sleep(3000).then(() => {
+                                lat = latitude;
+                                lon = longitude;
+                                resolve({ latitude, longitude });
+                            });
+                        })
+                        .catch((error) => {
+                            reject(error);
+                        });
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+
+        async function main(command) {
+            try {
+                const location = await getLocationWithDelay();
+                const latitude = location.latitude;
+                const longitude = location.longitude;
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+
+        main("yo");
 
         function sendToServer(command) {
-            //Fetch to send the command to the Flask backend
             fetch('/process-command', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ command }),
+                body: JSON.stringify({ command, latitude: lat, longitude: lon }),
             })
-            .then(response => response.json())
-            .then(data => {
-                responseDiv.innerText = data.response;
-                //Web Speech API to perform text-to-speech in the browser
-                // Create a new chat history entry with the command
-        const commandEntry = command;
-        commands.push(commandEntry);
+                .then(response => response.json())
+                .then(data => {
+                    // Display the response
+                    if (data.response.includes('youtube')) {
+                        youtubeVideoDiv.style.display = 'block';
+                        const iframe = youtubeVideoDiv.querySelector('iframe');
+                        iframe.src = data.response;
+                        data.response = "";
+                    } else {
+                        youtubeVideoDiv.style.display = 'none';
+                    }
 
-        // Create a new chat history entry with the response
-        const responseEntry = data.response;
-        responses.push(responseEntry);
+                    const synthesis = new SpeechSynthesisUtterance(data.response);
+                    synthesis.pitch = 1;
+                    synthesis.rate = 0.8;
 
-        // Update the chat history displays for commands and responses
-        updateChatHistory();
+                    synthesis.lang = 'en-US';
 
-                if (data.response.includes('youtube')){
-                    // If a YouTube URL is provided, display and play the video
-                    youtubeVideoDiv.style.display = 'block';
-                    const iframe = youtubeVideoDiv.querySelector('iframe');
-                    iframe.src = data.response;
-                    data.response = "";
-                } else {
-                    youtubeVideoDiv.style.display = 'none';
-                }
-            
-                const synthesis = new SpeechSynthesisUtterance(data.response);
-                synthesis.pitch = 1;
-                synthesis.rate = 0.8;
-                synthesis.lang = 'en-US';
-              
-               
-                speechSynthesis.speak(synthesis);
-            });
-            
-            function updateChatHistory() {
-    const chatContainer = document.getElementById('chatContainer');
+                    speechSynthesis.speak(synthesis);
 
-    for (let i = 0; i < Math.min(commands.length, responses.length); i++) {
-        const userCommand = document.createElement('div');
-        userCommand.classList.add('user-message');
-        userCommand.textContent = `User: ${commands[i]}`;
-        chatContainer.appendChild(userCommand);
-
-        const botResponse = document.createElement('div');
-        botResponse.classList.add('bot-message');
-        botResponse.textContent = `Bot: ${responses[i]}`;
-        chatContainer.appendChild(botResponse);
-    }
-}
-
-
-
+                    // Update chat history
+                    const entry = `<div class="chatEntry"><div class="userCommand">User: ${command}</div><div class="botResponse">Bot: ${data.response}</div></div>`;
+                    chatHistory += entry;
+                    chatHistoryDiv.innerHTML = chatHistory;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         }
     </script>
 </body>
+
 </html>
+
