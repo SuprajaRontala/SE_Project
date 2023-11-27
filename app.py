@@ -7,6 +7,8 @@ import pyjokes
 import pytz
 import geopy.distance
 from geopy.geocoders import Nominatim
+from PyMultiDictionary import MultiDictionary
+dictionary = MultiDictionary()
 
 GEOAPIFY_API_KEY = 'bad2ec3ffa3743b28a768ef23faad806'
 app = Flask(__name__)
@@ -65,6 +67,9 @@ def process_command():
     
     if 'nearby restaurants'  in command:
         return jsonify({'response': get_nearby_places_restaurant(data)})
+
+    if 'define' in command:
+        return jsonify({'response': get_meaning(command)})
  
     return jsonify({'response': "Please provide a valid input"})
 
@@ -297,6 +302,26 @@ def get_nearby_places_commercial(data):
 
     print(place_names)
     return place_names
+
+def get_meaning(command):
+    
+    if command.lower().startswith('define '):
+        
+        word_to_define = command[7:].strip()
+
+        
+        meaning_result = dictionary.meaning('en', word_to_define)
+
+        if meaning_result:
+           
+            word_type, word_meaning, _ = meaning_result
+
+            
+            meaning = f'{word_to_define.capitalize()} ({word_meaning} '
+            return meaning
+        
+    else:
+        return 'Invalid command. Please use the format: Define [word]'
 
 if __name__ == '_main_':
     app.run(debug=True)
