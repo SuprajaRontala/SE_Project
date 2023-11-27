@@ -83,6 +83,8 @@ def process_command():
         return jsonify({'response': get_meaning(command)})
     if 'email' in command.split():
         print(command)
+    if 'define' in command:
+        return jsonify({'response': get_meaning(command)})
         return jsonify({'response': command_send_email(command)})
  
     return jsonify({'response': "Please provide a valid input"})
@@ -369,6 +371,15 @@ def command_send_email(command):
             return "Email sent successfully!"
     except Exception as e:
         return f"An error occurred while sending the email: Please send email in the format send email to reciepient address subject content body content"
+def get_weather(data):
+    lat, lon = data['latitude'].rstrip(), data['longitude'].rstrip()
+    url = f"http://api.weatherstack.com/current?access_key=cf4f642c5284bd1005d7ec3ba23c374f&query={lat},{lon}"
+    response = requests.get(url)
+    location = response.json()['location']['name']
+    temperature = response.json()['current']['temperature']
+    weather_descriptions = response.json(
+    )['current']['weather_descriptions'][0]
 
+    return f"Current weather in {location}: is {weather_descriptions} and {temperature} degrees Celsius."
 if __name__ == '_main_':
     app.run(debug=True)
