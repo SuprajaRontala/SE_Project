@@ -1,73 +1,81 @@
-.responsed {
-    color: hwb(0 0% 100%);
-    font-size: 18px;
-    background-color: #6aada2;
-    font-size: medium;
-    position:absolute;
-    /* Add other styles as needed */
+.center-text1 {
+    background-color: #DCDCDC; 
+    color: black;
+    text-align: center;
+    padding: 10px;
 }
-.chatshistory
-{
-    color: hwb(0 0% 100%);
-    font-size: 18px;
-    background-color: #20dfbf;
-    font-size: medium;
-    position:absolute;
-    /* Add other styles as needed */
+#heading1 {
+    font-size: 30px;
+    color: white;
+    background-color: #4CAF50;
+    padding: 20px;
+    margin: 0;
+    text-transform: uppercase;
+    background-image: linear-gradient(
+      -225deg,
+      #231557 0%,
+      #1e107a 29%,
+      #1e107a 67%,
+      #231557 100%
+    );
+    background-size: auto auto;
+    background-clip: border-box;
+    background-size: 100% auto;
+    color: #fff;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textclip 2s linear infinite;
+        font-size: 130px;
+  }
+  #chatContainer {
+    text-align: center;
 }
-.center-text1
-{
-    background-color: rgb(176, 206, 201);
-    opacity: 0.3;
-}
-.h1
-{
-    font-size: 90px; 
-    color: white; 
-    background-color: rgb(25, 68, 62);
-}
-.chat-container {
+
+.chatEntry {
     display: flex;
     flex-direction: column;
-    position:absolute;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    
 }
 
-.command-container {
-    background-color: #E0E0E0;
+.userCommand {
+    color: white;
+    background-color: red;
+    font-size: medium;
     padding: 10px;
-    margin: 5px;
-    border-radius: 10px;
+    margin-right: 100px;
+    border-radius: 15px;
     align-self: flex-start;
-    position:absolute;
 }
 
-.response-container {
-    background-color: #C8F7C5;
+.botResponse {
+    color: white;
+    background-color: green;
+    font-size: medium;
     padding: 10px;
-    margin: 5px;
-    border-radius: 10px;
-    align-self: flex-end;
-    position:absolute;
-}
-.user-message {
-    text-align: left;
     margin-left: 10px;
-    margin-right: 60%;
-    background-color: #9ef0d9;
-    padding: 5px;
-    border-radius: 5px;
-    clear: both;
-    color: #0b0b0b;
+    border-radius: 15px;
+    align-self: flex-end;
 }
+#chathistory
+{
+    font-size: 18px; 
+    margin-top: 10px; 
+    padding: 50px; 
+    overflow-y: scroll; 
+    max-height: 500px;
+    
+}
+#record {
+    color: white;
+    background-color: #3498db;
+    font-size: medium;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
 
-.bot-message {
-    text-align: right;
-    margin-left: 60%;
-    margin-right: 10px;
-    background-color: #0bcd96;
-    color: #0b0b0b;
-    padding: 5px;
-    border-radius: 5px;
-    clear: both;
 }
 
