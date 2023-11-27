@@ -5,6 +5,10 @@ import requests
 import wikipedia
 import pyjokes
 import pytz
+import geopy.distance
+from geopy.geocoders import Nominatim
+
+GEOAPIFY_API_KEY = 'bad2ec3ffa3743b28a768ef23faad806'
 app = Flask(__name__)
 
 def render_ind():
@@ -50,8 +54,19 @@ def process_command():
  
     if 'news' in command:
         return jsonify({'response': command_tell_news()})
+    if 'nearby motels' in command:
+        return jsonify({'response': get_nearby_places_accomodation(data)})
+    
+    if 'nearby markets'  in command:
+        return jsonify({'response': get_nearby_places_commercial(data)})
+    
+    if 'nearby healthcare'  in command:
+        return jsonify({'response': get_nearby_places_healthcare(data)})
+    
+    if 'nearby restaurants'  in command:
+        return jsonify({'response': get_nearby_places_restaurant(data)})
  
-    return jsonify({'response': "Sorry, I couldn't understand you, please speak again with any of the following keywords: hello, music, time, who is, joke, news "})
+    return jsonify({'response': "Please provide a valid input"})
 
 
 
@@ -154,7 +169,134 @@ def command_tell_news():
 
     except requests.exceptions.RequestException as e:
         return f"An error occurred while fetching news: {e}"
+ def get_nearby_places_accomodation(data):
+   
+    lat = data['latitude'].rstrip()
+    lon = data['longitude'].rstrip()
 
+    print(lat, lon)
+
+    
+    places_url = 'https://api.geoapify.com/v2/places'
+    params = {
+        'categories': 'accommodation',
+        #'categories': 'amenity.toilet,building.toilet,catering.restaurant,commercial.food_and_drink,catering.fast_food',
+        'conditions': 'access',
+        'filter': f'circle:{lon},{lat},5000',
+        'filter': f'circle:{lon},{lat},5000',
+        'bias': f'proximity:{lon},{lat}',
+        'lang': 'en',
+        'limit': 5,
+        'apiKey': GEOAPIFY_API_KEY
+    }
+    places_data = requests.get(places_url, params=params).json()
+    
+    print(places_data)
+    place_names = []
+    for feature in places_data.get('features', []):
+        try:
+            place_names.append(feature['properties']['name'])
+        except KeyError:
+            pass
+
+    print(place_names)
+    return place_names
+def get_nearby_places_restaurant(data):
+   
+    lat = data['latitude'].rstrip()
+    lon = data['longitude'].rstrip()
+
+    print(lat, lon)
+
+    
+    places_url = 'https://api.geoapify.com/v2/places'
+    params = {
+        'categories': 'catering.restaurant,commercial.food_and_drink,catering.fast_food',
+        #'categories': 'amenity.toilet,building.toilet,catering.restaurant,commercial.food_and_drink,catering.fast_food',
+        'conditions': 'access',
+        'filter': f'circle:{lon},{lat},5000',
+        'filter': f'circle:{lon},{lat},5000',
+        'bias': f'proximity:{lon},{lat}',
+        'lang': 'en',
+        'limit': 5,
+        'apiKey': GEOAPIFY_API_KEY
+    }
+    places_data = requests.get(places_url, params=params).json()
+    
+    print(places_data)
+    place_names = []
+    for feature in places_data.get('features', []):
+        try:
+            place_names.append(feature['properties']['name'])
+        except KeyError:
+            pass
+
+    print(place_names)
+    return place_names
+def get_nearby_places_healthcare(data):
+    
+    lat = data['latitude'].rstrip()
+    lon = data['longitude'].rstrip()
+
+    print(lat, lon)
+
+    
+    places_url = 'https://api.geoapify.com/v2/places'
+    params = {
+        'categories': 'healthcare',
+        #'categories': 'amenity.toilet,building.toilet,catering.restaurant,commercial.food_and_drink,catering.fast_food',
+        'conditions': 'access',
+        'filter': f'circle:{lon},{lat},5000',
+        'filter': f'circle:{lon},{lat},5000',
+        'bias': f'proximity:{lon},{lat}',
+        'lang': 'en',
+        'limit': 5,
+        'apiKey': GEOAPIFY_API_KEY
+    }
+    places_data = requests.get(places_url, params=params).json()
+    
+    print(places_data)
+    place_names = []
+    for feature in places_data.get('features', []):
+        try:
+            place_names.append(feature['properties']['name'])
+        except KeyError:
+            pass
+
+    print(place_names)
+    return place_names
+def get_nearby_places_commercial(data):
+    
+    lat = data['latitude'].rstrip()
+    lon = data['longitude'].rstrip()
+
+    print(lat, lon)
+
+    
+    places_url = 'https://api.geoapify.com/v2/places'
+    params = {
+        'categories': 'commercial.supermarket',
+        #'categories': 'amenity.toilet,building.toilet,catering.restaurant,commercial.food_and_drink,catering.fast_food',
+        'conditions': 'access',
+        'filter': f'circle:{lon},{lat},5000',
+        'filter': f'circle:{lon},{lat},5000',
+        'bias': f'proximity:{lon},{lat}',
+        'lang': 'en',
+        'limit': 5,
+        'apiKey': GEOAPIFY_API_KEY
+    }
+    places_data = requests.get(places_url, params=params).json()
+    
+    print(places_data)
+    place_names = []
+    for feature in places_data.get('features', []):
+        try:
+            place_names.append(feature['properties']['name'])
+        except KeyError:
+            pass
+
+    print(place_names)
+    return place_names
 
 if __name__ == '_main_':
     app.run(debug=True)
